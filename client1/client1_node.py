@@ -310,7 +310,23 @@ For your report:
 -----------------------------------------
 """
 
+# ================================
+# STEP 8: SAVE CLIENT OUTPUT FOR SERVER
+# ================================
 
+import os
+
+os.makedirs("../client_output", exist_ok=True)
+
+np.savez(
+    "../client_output/client_1_output.npz",
+    weights=client_output["weights"],
+    bias=client_output["bias"],
+    num_samples=client_output["num_samples"],
+    accuracy=accuracy
+)
+
+print("Client 1 output saved to ../client_output/client_1_output.npz")
 # ================================
 # DEBUG / SANITY CHECK
 # ================================

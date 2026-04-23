@@ -163,6 +163,24 @@ client_output = {
     "num_samples": len(X_train)
 }
 
+# ================================
+# STEP 8: SAVE CLIENT OUTPUT FOR SERVER
+# ================================
+
+import os
+
+os.makedirs("../client_output", exist_ok=True)
+
+np.savez(
+    "../client_output/client_10_output.npz",
+    weights=client_output["weights"],
+    bias=client_output["bias"],
+    num_samples=client_output["num_samples"],
+    accuracy=accuracy
+)
+
+print("Client 10 output saved to ../client_output/client_10_output.npz")
+
 print("\nModel Weights Shape:", model.coef_.shape)
 print("Number of Training Samples:", len(X_train))
 
