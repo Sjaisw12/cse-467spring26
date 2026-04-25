@@ -4,9 +4,9 @@ CLIENT NODE (CLIENT 2)
 Same as client1, but fairness is computed using RACE.
 """
 
-# ================================
-# IMPORTS
-# ================================
+from __future__ import annotations
+
+from pathlib import Path
 
 import pandas as pd
 import numpy as np
@@ -17,11 +17,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 
 
-# ================================
-# CONFIGURATION
-# ================================
-
-DATA_PATH = "client_2.xlsx"
+DATA_PATH = Path(__file__).resolve().parent / "client_2.xlsx"
 
 TEST_SIZE = 0.2
 RANDOM_STATE = 42
@@ -30,172 +26,173 @@ CLIP_NORM = 1.0
 NOISE_SCALE = 0.1
 
 
-# ================================
-# STEP 1: LOAD DATA
-# ================================
+def run_client2(feature_columns, global_weights=None):
+    # ================================
+    # STEP 1: LOAD DATA
+    # ================================
 
-df = pd.read_excel(DATA_PATH)
+    df = pd.read_excel(DATA_PATH)
 
+    # ================================
+    # STEP 2: PREPARE FEATURES + LABEL
+    # ================================
 
-# ================================
-# STEP 2: PREPARE FEATURES + LABEL
-# ================================
+    y = df["income_group"]
 
-# ---- TARGET ----
-y = df["income_group"]
+    y = y.map({
+        "low": 0,
+        "medium": 1,
+        "high": 2
+    })
 
-# 🔥 convert target to numeric
-y = y.map({
-    "low": 0,
-    "medium": 1,
-    "high": 2
-})
+    X = df.drop("income_group", axis=1)
+    X = pd.get_dummies(X)
 
-# ---- FEATURES ----
-X = df.drop("income_group", axis=1)
+    for col in feature_columns:
+        if col not in X.columns:
+            X[col] = 0
 
-# 🔥 encode ONLY features
-X = pd.get_dummies(X)
+    X = X[feature_columns]
 
+    # ================================
+    # STEP 3: TRAIN / TEST SPLIT
+    # ================================
 
-# ================================
-# STEP 3: TRAIN / TEST SPLIT
-# ================================
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=TEST_SIZE,
+        random_state=RANDOM_STATE
+    )
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=TEST_SIZE,
-    random_state=RANDOM_STATE
-)
-# 🔥 SAVE ORIGINAL (IMPORTANT FOR FAIRNESS)
-X_test_original = X_test.copy()
+    X_test_original = X_test.copy()
 
+    # ================================
+    # STEP 4: SCALE DATA
+    # ================================
 
-# ================================
-# STEP 4: SCALE DATA (FIXED)
-# ================================
+    scaler = StandardScaler()
 
-scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
 
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+    X_train = pd.DataFrame(X_train_scaled, columns=X.columns)
+    X_test = pd.DataFrame(X_test_scaled, columns=X.columns)
 
-# 🔥 convert back to DataFrame (IMPORTANT)
-X_train = pd.DataFrame(X_train_scaled, columns=X.columns)
-X_test = pd.DataFrame(X_test_scaled, columns=X.columns)
+    # ================================
+    # STEP 5: TRAIN MODEL
+    # ================================
 
+    model = LogisticRegression(max_iter=5000)
+    model.fit(X_train, y_train)
 
-# ================================
-# STEP 5: TRAIN MODEL
-# ================================
+    # ================================
+    # STEP 6: LOCAL DIFFERENTIAL PRIVACY
+    # ================================
 
-model = LogisticRegression(max_iter=5000)
-model.fit(X_train, y_train)
+    weights = model.coef_
+    bias = model.intercept_
 
+    norm = np.linalg.norm(weights)
 
-# ================================
-# STEP 6: LOCAL DIFFERENTIAL PRIVACY
-# ================================
+    if norm > CLIP_NORM:
+        weights = weights * (CLIP_NORM / norm)
 
-weights = model.coef_
-bias = model.intercept_
+    noise = np.random.normal(0, NOISE_SCALE, weights.shape)
+    weights_noisy = weights + noise
 
-norm = np.linalg.norm(weights)
+    model.coef_ = weights_noisy
+    model.intercept_ = bias
 
-if norm > CLIP_NORM:
-    weights = weights * (CLIP_NORM / norm)
+    # ================================
+    # STEP 7: LOCAL TESTING
+    # ================================
 
-noise = np.random.normal(0, NOISE_SCALE, weights.shape)
-weights_noisy = weights + noise
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
 
-model.coef_ = weights_noisy
+    print("Client 2 Overall Accuracy:", accuracy)
 
+    # ================================
+    # STEP 7.1: FAIRNESS METRICS (RACE)
+    # ================================
 
-# ================================
-# STEP 7: LOCAL TESTING
-# ================================
+    print("\n=== Fairness Metrics (Race) ===")
 
-y_pred = model.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
+    white_col = None
+    black_col = None
 
-print("Client 2 Overall Accuracy:", accuracy)
+    for col in X.columns:
+        if "race" in col.lower() and "white" in col.lower():
+            white_col = col
+        if "race" in col.lower() and "black" in col.lower():
+            black_col = col
 
+    dp_gap = None
 
-# ================================
-# STEP 7.1: FAIRNESS METRICS (RACE)
-# ================================
+    if white_col is None or black_col is None:
+        print("⚠️ Race columns not found. Available columns:")
+        print(X.columns)
+    else:
+        white_idx = X_test_original[white_col] == 1
+        black_idx = X_test_original[black_col] == 1
 
-print("\n=== Fairness Metrics (Race) ===")
+        white_acc = accuracy_score(y_test[white_idx], y_pred[white_idx]) if white_idx.sum() > 0 else None
+        black_acc = accuracy_score(y_test[black_idx], y_pred[black_idx]) if black_idx.sum() > 0 else None
 
-# 🔥 auto-detect race columns
-white_col = None
-black_col = None
+        white_positive_rate = np.mean(y_pred[white_idx] == 2) if white_idx.sum() > 0 else None
+        black_positive_rate = np.mean(y_pred[black_idx] == 2) if black_idx.sum() > 0 else None
 
-for col in X.columns:
-    if "race" in col.lower() and "white" in col.lower():
-        white_col = col
-    if "race" in col.lower() and "black" in col.lower():
-        black_col = col
+        print("White Accuracy:", white_acc)
+        print("Black Accuracy:", black_acc)
 
-if white_col is None or black_col is None:
-    print("⚠️ Race columns not found. Available columns:")
-    print(X.columns)
-else:
-    white_idx = X_test_original[white_col] == 1
-    black_idx = X_test_original[black_col] == 1
+        print("\nDemographic Parity (High Income Rate):")
+        print("White Positive Rate:", white_positive_rate)
+        print("Black Positive Rate:", black_positive_rate)
 
-    # ---- ACCURACY ----
-    white_acc = accuracy_score(y_test[white_idx], y_pred[white_idx]) if white_idx.sum() > 0 else None
-    black_acc = accuracy_score(y_test[black_idx], y_pred[black_idx]) if black_idx.sum() > 0 else None
+        if white_positive_rate is not None and black_positive_rate is not None:
+            dp_gap = abs(white_positive_rate - black_positive_rate)
+            print("Demographic Parity Gap:", dp_gap)
 
-    # ---- FIXED POSITIVE RATE (HIGH INCOME ONLY) ----
-    white_positive_rate = np.mean(y_pred[white_idx] == 2) if white_idx.sum() > 0 else None
-    black_positive_rate = np.mean(y_pred[black_idx] == 2) if black_idx.sum() > 0 else None
+    # ================================
+    # STEP 8: OUTPUT FOR SERVER
+    # ================================
 
-    print("White Accuracy:", white_acc)
-    print("Black Accuracy:", black_acc)
+    client_output = {
+        "weights": model.coef_,
+        "bias": model.intercept_,
+        "num_samples": len(X_train),
+    }
 
-    print("\nDemographic Parity (High Income Rate):")
-    print("White Positive Rate:", white_positive_rate)
-    print("Black Positive Rate:", black_positive_rate)
+    # ================================
+    # STEP 8: SAVE CLIENT OUTPUT FOR SERVER / DEBUGGING
+    # ================================
 
-    if white_positive_rate is not None and black_positive_rate is not None:
-        dp_gap = abs(white_positive_rate - black_positive_rate)
-        print("Demographic Parity Gap:", dp_gap)
+    output_dir = Path(__file__).resolve().parent.parent / "client_output"
+    output_dir.mkdir(exist_ok=True)
 
+    np.savez(
+        output_dir / "client_2_output.npz",
+        weights=client_output["weights"],
+        bias=client_output["bias"],
+        num_samples=client_output["num_samples"],
+        accuracy=accuracy,
+        dp_gap=dp_gap if dp_gap is not None else -1,
+    )
 
-# ================================
-# STEP 8: OUTPUT FOR SERVER
-# ================================
+    print(f"Client 2 output saved to {output_dir / 'client_2_output.npz'}")
 
-client_output = {
-    "weights": model.coef_,
-    "bias": model.intercept_,
-    "num_samples": len(X_train)
-}
+    # ================================
+    # DEBUG
+    # ================================
 
-# ================================
-# STEP 8: SAVE CLIENT OUTPUT FOR SERVER
-# ================================
+    print("\nModel Weights Shape:", model.coef_.shape)
+    print("Number of Training Samples:", len(X_train))
 
-import os
-
-os.makedirs("../client_output", exist_ok=True)
-
-np.savez(
-    "../client_output/client_2_output.npz",
-    weights=client_output["weights"],
-    bias=client_output["bias"],
-    num_samples=client_output["num_samples"],
-    accuracy=accuracy
-)
-
-print("Client 2 output saved to ../client_output/client_2_output.npz")
-
-# ================================
-# DEBUG
-# ================================
-
-print("\nModel Weights Shape:", model.coef_.shape)
-print("Number of Training Samples:", len(X_train))
+    return {
+        "weights": model.coef_.flatten(),
+        "bias": model.intercept_,
+        "num_samples": len(X_train),
+        "local_accuracy": accuracy,
+        "dp_gap": dp_gap,
+    }

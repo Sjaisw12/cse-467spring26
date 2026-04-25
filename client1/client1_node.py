@@ -1,25 +1,10 @@
 """
 CLIENT NODE (CLIENT 1)
-
-This file simulates ONE federated learning client.
-
-Responsibilities:
-1. Load its own local dataset
-2. Preprocess data (features + labels)
-3. Split into train/test (local evaluation)
-4. Train logistic regression model
-5. Apply Local Differential Privacy (DP)
-6. Evaluate locally
-7. Prepare weights to send to server
-
-IMPORTANT:
-- Each client runs independently
-- No raw data leaves this client (privacy goal)
 """
 
-# ================================
-# IMPORTS
-# ================================
+from __future__ import annotations
+
+from pathlib import Path
 
 import pandas as pd
 import numpy as np
@@ -30,306 +15,142 @@ from sklearn.metrics import accuracy_score
 
 
 # ================================
-# CONFIGURATION (YOU CAN TUNE THESE)
+# CONFIGURATION
 # ================================
 
-DATA_PATH = "client_1.xlsx"
+DATA_PATH = Path(__file__).resolve().parent / "client_1.xlsx"
 
 TEST_SIZE = 0.2
 RANDOM_STATE = 42
 
-# Differential Privacy parameters
-CLIP_NORM = 1.0          # controls gradient magnitude
-NOISE_SCALE = 0.1        # controls privacy strength (higher = more privacy, less accuracy)
+CLIP_NORM = 1.0
+NOISE_SCALE = 0.1
 
+def run_client1(feature_columns, global_weights=None):
+    from pathlib import Path
 
-# ================================
-# STEP 1: LOAD DATA
-# ================================
+    # ================================
+    # STEP 1: LOAD DATA
+    # ================================
+    DATA_PATH = Path(__file__).resolve().parent / "client_1.xlsx"
+    df = pd.read_excel(DATA_PATH)
 
-df = pd.read_excel(DATA_PATH)
+    # ================================
+    # STEP 2: PREPARE FEATURES + LABEL
+    # ================================
+    y = df["income_group"]
+    X = df.drop("income_group", axis=1)
 
-# NOTE:
-# Data should already be cleaned from your previous script.
-# If not, you would need to:
-# - remove missing values
-# - encode categorical features
+    X = pd.get_dummies(X)
 
+    # align schema with global features
+    for col in feature_columns:
+        if col not in X.columns:
+            X[col] = 0
 
-# ================================
-# STEP 2: PREPARE FEATURES + LABEL
-# ================================
+    X = X[feature_columns]
 
-"""
-IMPORTANT CONCEPT:
+    # ================================
+    # STEP 3: TRAIN / TEST SPLIT
+    # ================================
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE
+    )
 
-X = features (input)
-y = label (target)
+    # ================================
+    # STEP 4: TRAIN MODEL
+    # ================================
+    model = LogisticRegression(max_iter=1000)
+    model.fit(X_train, y_train)
 
-We MUST NOT include the target in features (data leakage).
-"""
+    # ================================
+    # STEP 5: APPLY LOCAL DP
+    # ================================
+    weights = model.coef_
+    bias = model.intercept_
 
-y = df["income_group"]  # target (0 = low, 1 = high)
-X = df.drop("income_group", axis=1)
+    norm = np.linalg.norm(weights)
+    if norm > CLIP_NORM:
+        weights = weights * (CLIP_NORM / norm)
 
-# NOTE:
-# At this stage:
-# X should already be numeric (after one-hot encoding earlier)
-# If not, you MUST encode before training
+    noise = np.random.normal(0, NOISE_SCALE, weights.shape)
+    weights_noisy = weights + noise
 
+    model.coef_ = weights_noisy
+    model.intercept_ = bias
 
-# ================================
-# STEP 3: TRAIN / TEST SPLIT
-# ================================
+    # ================================
+    # STEP 6: LOCAL TESTING
+    # ================================
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
 
-"""
-WHY THIS IS ESSENTIAL:
+    print("Client 1 Overall Accuracy:", accuracy)
 
-- We need unseen data to evaluate performance
-- Otherwise model will just memorize (overfitting)
+    # ================================
+    # STEP 6.1: FAIRNESS METRICS
+    # ================================
+    gender_col = None
+    for col in X.columns:
+        if "gender" in col.lower():
+            gender_col = col
+            break
 
-Each client evaluates locally on its own data.
-"""
+    dp_gap = None
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=TEST_SIZE,
-    random_state=RANDOM_STATE
-)
+    if gender_col:
+        male_idx = X_test[gender_col] == 1
+        female_idx = X_test[gender_col] == 0
 
+        male_acc = accuracy_score(y_test[male_idx], y_pred[male_idx]) if male_idx.sum() > 0 else None
+        female_acc = accuracy_score(y_test[female_idx], y_pred[female_idx]) if female_idx.sum() > 0 else None
 
-# ================================
-# STEP 4: TRAIN LOGISTIC REGRESSION
-# ================================
+        male_pos = np.mean(y_pred[male_idx]) if male_idx.sum() > 0 else None
+        female_pos = np.mean(y_pred[female_idx]) if female_idx.sum() > 0 else None
 
-"""
-WHY LOGISTIC REGRESSION?
+        print("\n=== Fairness Metrics (Gender) ===")
+        print("Male Accuracy:", male_acc)
+        print("Female Accuracy:", female_acc)
 
-- Simple baseline
-- Interpretable (important for fairness analysis)
-- Works well for binary classification
+        print("\nDemographic Parity:")
+        print("Male Positive Rate:", male_pos)
+        print("Female Positive Rate:", female_pos)
 
-Model learns:
-P(y=1 | X) = probability of high income
-"""
-
-model = LogisticRegression(max_iter=1000)
-model.fit(X_train, y_train)
-
-
-# ================================
-# STEP 5: APPLY LOCAL DIFFERENTIAL PRIVACY (CORE PART)
-# ================================
-
-"""
-WHAT IS HAPPENING HERE?
-
-In real DP-SGD:
-- gradients are clipped per sample
-- noise is added during training
-
-Here we SIMULATE it by:
-1. Clipping model weights
-2. Adding Gaussian noise
-
-WHY THIS IS IMPORTANT:
-- Prevents leakage of individual user data
-- Makes model privacy-preserving
-
-TRADE-OFF:
-- More noise = more privacy BUT less accuracy
-"""
-
-# Extract learned weights
-weights = model.coef_
-bias = model.intercept_
-
-# ---- STEP 5A: CLIP WEIGHTS ----
-
-norm = np.linalg.norm(weights)
-
-if norm > CLIP_NORM:
-    weights = weights * (CLIP_NORM / norm)
-
-# ---- STEP 5B: ADD NOISE ----
-
-noise = np.random.normal(0, NOISE_SCALE, weights.shape)
-weights_noisy = weights + noise
-
-# Update model with noisy weights
-model.coef_ = weights_noisy
-
-
-# ================================
-# STEP 6: LOCAL TESTING
-# ================================
-
-y_pred = model.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-
-print("Client 1 Overall Accuracy:", accuracy)
-
-
-# ================================
-# STEP 6.1: FAIRNESS METRICS (ADDED)
-# ================================
-
-"""
-We measure fairness across gender.
-
-Assumption:
-- After encoding, gender is represented as:
-    gender_Male (1 = male, 0 = female)
-
-If your column name is different, print X.columns and adjust.
-"""
-
-# ---- FIND GENDER COLUMN ----
-gender_col = None
-
-for col in X.columns:
-    if "gender" in col.lower():
-        gender_col = col
-        break
-
-if gender_col is None:
-    print("⚠️ Gender column not found — cannot compute fairness")
-else:
-    # ---- SPLIT TEST DATA BY GENDER ----
-    male_idx = X_test[gender_col] == 1
-    female_idx = X_test[gender_col] == 0
-
-    # ---- MALE METRICS ----
-    if male_idx.sum() > 0:
-        male_acc = accuracy_score(y_test[male_idx], y_pred[male_idx])
-        male_positive_rate = np.mean(y_pred[male_idx])
+        if male_pos is not None and female_pos is not None:
+            dp_gap = abs(male_pos - female_pos)
+            print("Demographic Parity Gap:", dp_gap)
     else:
-        male_acc = None
-        male_positive_rate = None
+        print("⚠️ Gender column not found")
 
-    # ---- FEMALE METRICS ----
-    if female_idx.sum() > 0:
-        female_acc = accuracy_score(y_test[female_idx], y_pred[female_idx])
-        female_positive_rate = np.mean(y_pred[female_idx])
-    else:
-        female_acc = None
-        female_positive_rate = None
+    # ================================
+    # STEP 8: SAVE CLIENT OUTPUT (KEPT ✅)
+    # ================================
+    output_dir = Path(__file__).resolve().parent.parent / "client_output"
+    output_dir.mkdir(exist_ok=True)
 
-    # ---- PRINT RESULTS ----
-    print("\n=== Fairness Metrics (Gender) ===")
-    print("Male Accuracy:", male_acc)
-    print("Female Accuracy:", female_acc)
+    np.savez(
+        output_dir / "client_1_output.npz",
+        weights=model.coef_.flatten(),
+        bias=model.intercept_,
+        num_samples=len(X_train),
+        accuracy=accuracy,
+        dp_gap=dp_gap if dp_gap is not None else -1
+    )
 
-    print("\nDemographic Parity (Positive Prediction Rate):")
-    print("Male Positive Rate:", male_positive_rate)
-    print("Female Positive Rate:", female_positive_rate)
+    print(f"Client 1 output saved to {output_dir / 'client_1_output.npz'}")
 
-    # ---- FAIRNESS GAP ----
-    if male_positive_rate is not None and female_positive_rate is not None:
-        dp_gap = abs(male_positive_rate - female_positive_rate)
-        print("Demographic Parity Gap:", dp_gap)
+    print("\nModel Weights Shape:", model.coef_.shape)
+    print("Number of Training Samples:", len(X_train))
 
-
-# ================================
-# STEP 7: PREPARE OUTPUT FOR SERVER
-# ================================
-
-"""
-WHAT GETS SENT TO SERVER?
-
-ONLY:
-- model weights
-- bias
-
-NEVER:
-- raw data
-
-WHY:
-- preserves privacy (core idea of FL)
-"""
-
-client_output = {
-    "weights": model.coef_,
-    "bias": model.intercept_,
-    "num_samples": len(X_train)  # used for weighted averaging (FedAvg)
-}
-
-
-# ================================
-# WHAT IS MISSING (IMPORTANT FOR PROJECT)
-# ================================
-
-"""
-1. FAIRNESS METRICS (VERY IMPORTANT FOR YOUR PROJECT)
-
-You need to compute:
-- Demographic Parity
-- Equal Opportunity
-
-Example:
-compare predictions across gender/race groups
-
------------------------------------------
-
-2. MULTIPLE CLIENTS
-
-Right now:
-- only client1 exists
-
-Later:
-- 10 clients
-- server aggregates weights
-
------------------------------------------
-
-3. FEDERATED TRAINING LOOP
-
-You still need:
-- server.py
-- aggregation logic (FedAvg)
-
------------------------------------------
-
-4. REAL DP IMPLEMENTATION
-
-Current approach = SIMPLIFIED
-
-Better approach (optional upgrade):
-- use Opacus (PyTorch DP library)
-
------------------------------------------
-
-5. LOGGING + EXPERIMENT TRACKING
-
-For your report:
-- store accuracy
-- store epsilon (privacy budget)
-- store fairness metrics
-
------------------------------------------
-"""
-
-# ================================
-# STEP 8: SAVE CLIENT OUTPUT FOR SERVER
-# ================================
-
-import os
-
-os.makedirs("../client_output", exist_ok=True)
-
-np.savez(
-    "../client_output/client_1_output.npz",
-    weights=client_output["weights"],
-    bias=client_output["bias"],
-    num_samples=client_output["num_samples"],
-    accuracy=accuracy
-)
-
-print("Client 1 output saved to ../client_output/client_1_output.npz")
-# ================================
-# DEBUG / SANITY CHECK
-# ================================
-
-print("\nModel Weights Shape:", model.coef_.shape)
-print("Number of Training Samples:", len(X_train))
+    # ================================
+    # RETURN TO SERVER
+    # ================================
+    return {
+        "weights": model.coef_.flatten(),
+        "bias": model.intercept_,
+        "num_samples": len(X_train),
+        "local_accuracy": accuracy,
+        "dp_gap": dp_gap,
+    }
+    
+    
