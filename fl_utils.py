@@ -6,26 +6,19 @@ Shared utilities for federated learning pipeline.
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 
 
-TARGET_CANDIDATES = [
-    "income",
-    "label",
-    "target",
-    "class",
-    "y",
-    "salary"
-]
+TARGET_COLUMN = "income_group"
 
 SENSITIVE_CANDIDATES = [
     "sex",
     "gender",
-    "race"
+    "race",
+    "age_group",
 ]
 
 
@@ -35,20 +28,18 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     for col in df.columns:
         if df[col].dtype == object:
-            df[col] = df[col].astype(str).str.strip()
+            df[col] = df[col].astype(str).str.strip().str.lower()
 
     return df
 
 
 def find_target_column(df: pd.DataFrame) -> str:
-    lower_map = {c.lower(): c for c in df.columns}
+    if TARGET_COLUMN in df.columns:
+        return TARGET_COLUMN
 
-    for candidate in TARGET_CANDIDATES:
-        if candidate.lower() in lower_map:
-            return lower_map[candidate.lower()]
-
-    # fallback: use last column
-    return df.columns[-1]
+    raise ValueError(
+        f"Target column '{TARGET_COLUMN}' not found. Available columns: {list(df.columns)}"
+    )
 
 
 def find_sensitive_column(df: pd.DataFrame) -> Optional[str]:
@@ -61,51 +52,43 @@ def find_sensitive_column(df: pd.DataFrame) -> Optional[str]:
     return None
 
 
-def normalize_binary_label(series: pd.Series) -> pd.Series:
-    """
-    Converts common Adult-income style labels into 0/1.
-    """
-    s = series.copy()
+def normalize_income_group(series: pd.Series) -> pd.Series:
+    s = series.astype(str).str.strip().str.lower()
 
-    if pd.api.types.is_numeric_dtype(s):
-        unique_vals = sorted(pd.Series(s).dropna().unique())
-        if set(unique_vals).issubset({0, 1}):
-            return s.astype(int)
-
-    s = s.astype(str).str.strip().str.replace(".", "", regex=False)
-
-    positive_values = {
-        ">50K", "1", "yes", "true", "positive", "high", "approved"
+    mapping = {
+        "low": 0,
+        "medium": 1,
+        "high": 2,
+        "0": 0,
+        "1": 1,
+        "2": 2,
     }
 
-    return s.apply(lambda x: 1 if x in positive_values else 0).astype(int)
+    return s.map(mapping).astype(int)
 
 
 def build_feature_schema(client_paths: List[str]) -> Tuple[List[str], str]:
-    """
-    Build one shared feature schema across all clients so dummy columns align.
-    Returns:
-        feature_columns, target_column
-    """
-    all_feature_frames = []
-    detected_target = None
+    target_column = TARGET_COLUMN
+    all_feature_columns = set()
 
     for path in client_paths:
         df = pd.read_excel(path)
         df = clean_dataframe(df)
 
-        target_col = find_target_column(df)
-        if detected_target is None:
-            detected_target = target_col
+        if target_column not in df.columns:
+            raise ValueError(
+                f"Target column '{target_column}' not found in {path}. "
+                f"Available columns: {list(df.columns)}"
+            )
 
-        X = df.drop(columns=[target_col], errors="ignore")
+        X = df.drop(columns=[target_column])
         X_encoded = pd.get_dummies(X, drop_first=False)
-        all_feature_frames.append(X_encoded)
 
-    combined = pd.concat(all_feature_frames, axis=0, ignore_index=True).fillna(0)
-    feature_columns = list(combined.columns)
+        all_feature_columns.update(X_encoded.columns)
 
-    return feature_columns, detected_target
+    feature_columns = sorted(list(all_feature_columns))
+
+    return feature_columns, target_column
 
 
 def load_client_dataset(
@@ -117,19 +100,24 @@ def load_client_dataset(
     df = clean_dataframe(df)
 
     if target_column is None:
-        target_column = find_target_column(df)
+        target_column = TARGET_COLUMN
+
+    if target_column not in df.columns:
+        raise ValueError(
+            f"Target column '{target_column}' not found in {data_path}. "
+            f"Available columns: {list(df.columns)}"
+        )
 
     sensitive_column = find_sensitive_column(df)
 
-    y = normalize_binary_label(df[target_column])
+    y = normalize_income_group(df[target_column])
 
-    X_raw = df.drop(columns=[target_column], errors="ignore")
+    X_raw = df.drop(columns=[target_column])
     X_encoded = pd.get_dummies(X_raw, drop_first=False)
-
     X_encoded = X_encoded.reindex(columns=feature_columns, fill_value=0)
 
     sensitive_values = None
-    if sensitive_column is not None and sensitive_column in df.columns:
+    if sensitive_column is not None:
         sensitive_values = df[sensitive_column].copy()
 
     return (

@@ -23,8 +23,7 @@ class FederatedServer:
         global_noise_scale: float = 0.05,
         global_learning_rate: float = 1.0,
     ):
-        # +1 for intercept
-        self.global_weights = np.zeros(num_features + 1, dtype=np.float64)
+        self.global_weights = np.zeros(num_features, dtype=np.float64)
         self.global_clip_norm = global_clip_norm
         self.global_noise_scale = global_noise_scale
         self.global_learning_rate = global_learning_rate
@@ -33,29 +32,34 @@ class FederatedServer:
         if not client_payloads:
             raise ValueError("No client payloads received by server.")
 
-        updates = [payload["update"] for payload in client_payloads]
+        updates = [payload["weights"] for payload in client_payloads]
+
         sample_counts = np.array(
-            [payload["num_train_samples"] for payload in client_payloads],
+            [payload["num_samples"] for payload in client_payloads],
             dtype=np.float64
         )
 
         total_samples = sample_counts.sum()
+
         if total_samples <= 0:
             raise ValueError("Total client sample count must be > 0.")
 
-        # Step 1: clip each client update
         clipped_updates = clip_client_updates(updates, self.global_clip_norm)
 
-        # Step 2: weighted FedAvg over updates
         weighted_update = np.zeros_like(self.global_weights)
+
         for upd, count in zip(clipped_updates, sample_counts):
             weighted_update += (count / total_samples) * upd
 
-        # Step 3: apply Global DP noise
-        private_update = add_gaussian_noise(weighted_update, self.global_noise_scale)
+        private_update = add_gaussian_noise(
+            weighted_update,
+            self.global_noise_scale
+        )
 
-        # Step 4: update global model
-        self.global_weights = self.global_weights + self.global_learning_rate * private_update
+        self.global_weights = (
+            self.global_weights
+            + self.global_learning_rate * private_update
+        )
 
         return self.global_weights.copy()
 
