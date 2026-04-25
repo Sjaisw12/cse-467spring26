@@ -23,7 +23,7 @@ TEST_SIZE = 0.2
 RANDOM_STATE = 42
 
 CLIP_NORM = 1.0
-NOISE_SCALE = 0.1
+NOISE_SCALE = 0.0
 
 
 def run_client3(feature_columns, global_weights=None):
