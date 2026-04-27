@@ -1,0 +1,861 @@
+(base) ronitkhanna@Ronits-MacBook-Pro cse-467spring26 % python3 -u main_dp.py
+/Users/ronitkhanna/cse-467spring26
+Detected target column: income_group
+Total shared features: 109
+
+============================================================
+ROUND 1
+============================================================
+Client 1 Overall Accuracy: 0.8
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.8
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.05
+Client 1 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_1_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 2 Overall Accuracy: 0.81
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 2 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_2_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 3 Overall Accuracy: 0.78
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8148148148148148
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.76
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.6842105263157895
+age_group_45-54 High Income Rate: 0.05263157894736842
+age_group_55-64 Accuracy: 0.625
+age_group_55-64 High Income Rate: 0.125
+age_group_65+ Accuracy: 0.3333333333333333
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.125
+Client 3 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_3_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 4 Overall Accuracy: 0.8
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.8
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.02
+Client 4 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_4_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 5 Overall Accuracy: 0.74
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 5 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_5_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 6 Overall Accuracy: 0.71
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8620689655172413
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.64
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.5454545454545454
+age_group_45-54 High Income Rate: 0.0
+age_group_55-64 Accuracy: 0.5454545454545454
+age_group_55-64 High Income Rate: 0.09090909090909091
+age_group_65+ Accuracy: 0.0
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.09090909090909091
+Client 6 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_6_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 7 Overall Accuracy: 0.72
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.72
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.04
+Client 7 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_7_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Male samples: 0
+Female samples: 100
+Client 8 Overall Accuracy: 0.86
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 8 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_8_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+/Users/ronitkhanna/cse-467spring26/client9/client9_node.py:45: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  X[col] = 0
+Client 9 Overall Accuracy: 0.76
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.84
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.68
+age_group_35-44 High Income Rate: 0.04
+age_group_45-54 Accuracy: 0.6
+age_group_45-54 High Income Rate: 0.2
+age_group_55-64 Accuracy: 0.6153846153846154
+age_group_55-64 High Income Rate: 0.15384615384615385
+age_group_65+ Accuracy: 0.8571428571428571
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.2
+Client 9 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_9_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 10 Overall Accuracy: 0.8
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.8
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.06
+Client 10 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_10_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+
+Average local accuracy before server aggregation: 0.7780
+Global model updated. Weight vector length = 109
+
+============================================================
+ROUND 2
+============================================================
+Client 1 Overall Accuracy: 0.79
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.79
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.04
+Client 1 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_1_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 2 Overall Accuracy: 0.81
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 2 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_2_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 3 Overall Accuracy: 0.79
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8148148148148148
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.8
+age_group_35-44 High Income Rate: 0.04
+age_group_45-54 Accuracy: 0.6842105263157895
+age_group_45-54 High Income Rate: 0.05263157894736842
+age_group_55-64 Accuracy: 0.625
+age_group_55-64 High Income Rate: 0.125
+age_group_65+ Accuracy: 0.3333333333333333
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.125
+Client 3 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_3_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 4 Overall Accuracy: 0.8
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.8
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.02
+Client 4 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_4_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 5 Overall Accuracy: 0.73
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 5 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_5_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 6 Overall Accuracy: 0.71
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8620689655172413
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.64
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.5454545454545454
+age_group_45-54 High Income Rate: 0.0
+age_group_55-64 Accuracy: 0.5454545454545454
+age_group_55-64 High Income Rate: 0.09090909090909091
+age_group_65+ Accuracy: 0.0
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.09090909090909091
+Client 6 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_6_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 7 Overall Accuracy: 0.72
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.72
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.02
+Client 7 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_7_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Male samples: 0
+Female samples: 100
+Client 8 Overall Accuracy: 0.86
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 8 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_8_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+/Users/ronitkhanna/cse-467spring26/client9/client9_node.py:45: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  X[col] = 0
+Client 9 Overall Accuracy: 0.74
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.84
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.68
+age_group_35-44 High Income Rate: 0.04
+age_group_45-54 Accuracy: 0.4666666666666667
+age_group_45-54 High Income Rate: 0.06666666666666667
+age_group_55-64 Accuracy: 0.6153846153846154
+age_group_55-64 High Income Rate: 0.15384615384615385
+age_group_65+ Accuracy: 0.8571428571428571
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.15384615384615385
+Client 9 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_9_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 10 Overall Accuracy: 0.78
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.78
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.1
+Client 10 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_10_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+
+Average local accuracy before server aggregation: 0.7730
+Global model updated. Weight vector length = 109
+
+============================================================
+ROUND 3
+============================================================
+Client 1 Overall Accuracy: 0.79
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.79
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.06
+Client 1 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_1_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 2 Overall Accuracy: 0.8
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 2 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_2_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 3 Overall Accuracy: 0.79
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8148148148148148
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.76
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.6842105263157895
+age_group_45-54 High Income Rate: 0.05263157894736842
+age_group_55-64 Accuracy: 0.75
+age_group_55-64 High Income Rate: 0.0
+age_group_65+ Accuracy: 0.3333333333333333
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.05263157894736842
+Client 3 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_3_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 4 Overall Accuracy: 0.82
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.82
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.02
+Client 4 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_4_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 5 Overall Accuracy: 0.74
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 5 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_5_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 6 Overall Accuracy: 0.71
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8620689655172413
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.64
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.5454545454545454
+age_group_45-54 High Income Rate: 0.0
+age_group_55-64 Accuracy: 0.5454545454545454
+age_group_55-64 High Income Rate: 0.09090909090909091
+age_group_65+ Accuracy: 0.0
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.09090909090909091
+Client 6 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_6_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 7 Overall Accuracy: 0.73
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.73
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.01
+Client 7 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_7_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Male samples: 0
+Female samples: 100
+Client 8 Overall Accuracy: 0.85
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 8 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_8_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+/Users/ronitkhanna/cse-467spring26/client9/client9_node.py:45: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  X[col] = 0
+Client 9 Overall Accuracy: 0.7
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.84
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.6
+age_group_35-44 High Income Rate: 0.12
+age_group_45-54 Accuracy: 0.4
+age_group_45-54 High Income Rate: 0.13333333333333333
+age_group_55-64 Accuracy: 0.6153846153846154
+age_group_55-64 High Income Rate: 0.15384615384615385
+age_group_65+ Accuracy: 0.7142857142857143
+age_group_65+ High Income Rate: 0.14285714285714285
+
+Demographic Parity Gap: 0.15384615384615385
+Client 9 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_9_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 10 Overall Accuracy: 0.84
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.84
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.12
+Client 10 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_10_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+
+Average local accuracy before server aggregation: 0.7770
+Global model updated. Weight vector length = 109
+
+============================================================
+ROUND 4
+============================================================
+Client 1 Overall Accuracy: 0.78
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.78
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.03
+Client 1 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_1_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 2 Overall Accuracy: 0.8
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 2 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_2_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 3 Overall Accuracy: 0.79
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8148148148148148
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.76
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.6842105263157895
+age_group_45-54 High Income Rate: 0.05263157894736842
+age_group_55-64 Accuracy: 0.625
+age_group_55-64 High Income Rate: 0.125
+age_group_65+ Accuracy: 0.6666666666666666
+age_group_65+ High Income Rate: 0.3333333333333333
+
+Demographic Parity Gap: 0.3333333333333333
+Client 3 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_3_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 4 Overall Accuracy: 0.84
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.84
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.04
+Client 4 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_4_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 5 Overall Accuracy: 0.74
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 5 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_5_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 6 Overall Accuracy: 0.71
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8620689655172413
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.64
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.5454545454545454
+age_group_45-54 High Income Rate: 0.0
+age_group_55-64 Accuracy: 0.5454545454545454
+age_group_55-64 High Income Rate: 0.09090909090909091
+age_group_65+ Accuracy: 0.0
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.09090909090909091
+Client 6 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_6_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 7 Overall Accuracy: 0.73
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.73
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.03
+Client 7 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_7_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Male samples: 0
+Female samples: 100
+Client 8 Overall Accuracy: 0.86
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 8 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_8_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+/Users/ronitkhanna/cse-467spring26/client9/client9_node.py:45: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  X[col] = 0
+Client 9 Overall Accuracy: 0.7
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8
+age_group_25-34 High Income Rate: 0.04
+age_group_35-44 Accuracy: 0.64
+age_group_35-44 High Income Rate: 0.08
+age_group_45-54 Accuracy: 0.4
+age_group_45-54 High Income Rate: 0.13333333333333333
+age_group_55-64 Accuracy: 0.6153846153846154
+age_group_55-64 High Income Rate: 0.15384615384615385
+age_group_65+ Accuracy: 0.7142857142857143
+age_group_65+ High Income Rate: 0.14285714285714285
+
+Demographic Parity Gap: 0.15384615384615385
+Client 9 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_9_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 10 Overall Accuracy: 0.82
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.82
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.08
+Client 10 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_10_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+
+Average local accuracy before server aggregation: 0.7770
+Global model updated. Weight vector length = 109
+
+============================================================
+ROUND 5
+============================================================
+Client 1 Overall Accuracy: 0.78
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.78
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.03
+Client 1 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_1_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 2 Overall Accuracy: 0.78
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 2 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_2_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 3 Overall Accuracy: 0.79
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8148148148148148
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.76
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.6842105263157895
+age_group_45-54 High Income Rate: 0.05263157894736842
+age_group_55-64 Accuracy: 0.75
+age_group_55-64 High Income Rate: 0.0
+age_group_65+ Accuracy: 0.3333333333333333
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.05263157894736842
+Client 3 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_3_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 4 Overall Accuracy: 0.81
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.81
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.01
+Client 4 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_4_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 5 Overall Accuracy: 0.74
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 5 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_5_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 6 Overall Accuracy: 0.73
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.8620689655172413
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.64
+age_group_35-44 High Income Rate: 0.0
+age_group_45-54 Accuracy: 0.5909090909090909
+age_group_45-54 High Income Rate: 0.045454545454545456
+age_group_55-64 Accuracy: 0.5454545454545454
+age_group_55-64 High Income Rate: 0.09090909090909091
+age_group_65+ Accuracy: 1.0
+age_group_65+ High Income Rate: 1.0
+
+Demographic Parity Gap: 1.0
+Client 6 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_6_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 7 Overall Accuracy: 0.73
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.73
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.03
+Client 7 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_7_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Male samples: 0
+Female samples: 100
+Client 8 Overall Accuracy: 0.85
+
+=== Fairness Metrics (Race) ===
+White Accuracy: None
+Black Accuracy: None
+
+Demographic Parity (High Income Rate):
+White Positive Rate: None
+Black Positive Rate: None
+Client 8 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_8_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+/Users/ronitkhanna/cse-467spring26/client9/client9_node.py:45: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  X[col] = 0
+Client 9 Overall Accuracy: 0.74
+
+=== Fairness Metrics (Age Group) ===
+age_group_18-24 Accuracy: 1.0
+age_group_18-24 High Income Rate: 0.0
+age_group_25-34 Accuracy: 0.84
+age_group_25-34 High Income Rate: 0.0
+age_group_35-44 Accuracy: 0.68
+age_group_35-44 High Income Rate: 0.04
+age_group_45-54 Accuracy: 0.4666666666666667
+age_group_45-54 High Income Rate: 0.06666666666666667
+age_group_55-64 Accuracy: 0.6153846153846154
+age_group_55-64 High Income Rate: 0.15384615384615385
+age_group_65+ Accuracy: 0.8571428571428571
+age_group_65+ High Income Rate: 0.0
+
+Demographic Parity Gap: 0.15384615384615385
+Client 9 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_9_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+Client 10 Overall Accuracy: 0.83
+
+=== Fairness Metrics (Gender) ===
+Male Accuracy: None
+Female Accuracy: 0.83
+
+Demographic Parity (High Income Rate):
+Male Positive Rate: None
+Female Positive Rate: 0.07
+Client 10 output saved to /Users/ronitkhanna/cse-467spring26/client_output/client_10_output.npz
+
+Model Weights Shape: (1, 109)
+Number of Training Samples: 400
+
+Average local accuracy before server aggregation: 0.7780
+Global model updated. Weight vector length = 109
+
+Training complete.
+Final global weights:
+[ 1.04946132e+00 -7.74522595e-01  2.21699629e-01  4.05331639e-01
+  3.31014467e-01 -2.45700034e-02 -5.11737791e-01  2.33561821e+00
+  4.74731954e-01 -3.65601501e-01 -2.08654312e-01 -2.15581084e-01
+ -3.31598503e-02 -1.29134195e-01 -8.38796850e-02 -1.60346322e-01
+ -5.13688533e-02  2.89238732e-02 -3.05058722e-02 -5.42935330e-02
+ -8.73782298e-02  2.36448487e-02  1.11738804e+00  8.45870219e-03
+  9.17256038e-02  7.36921483e-02  7.40945134e-02  4.42174271e-02
+ -8.67627737e-03  7.36883803e-01 -1.67600705e-02  1.89565449e-02
+ -1.51018760e-02  4.08496953e-02  3.83923030e-03 -2.03300402e-02
+  1.79282371e-02  5.39803250e-02 -7.98950812e-03 -2.45003038e-02
+  1.10114665e-02  6.47645219e-02  4.22824569e-02 -1.42727995e-02
+  5.57019673e-03  1.19913556e-02 -6.43098492e-02 -1.41838799e-02
+  3.52450289e-02  2.95182898e-06  1.06064405e-02 -4.19885181e-02
+  1.93220793e-02  2.45399755e-02 -6.80570414e-02  2.26530657e-02
+  2.59935018e-02 -7.28270202e-02  1.38712954e-02  9.26716569e-03
+ -7.38604505e-02 -8.38040357e-03  9.37137118e-03  3.18482507e-02
+  1.35852887e-02 -4.01210539e-02 -3.60240655e-02 -8.33968923e-02
+  5.68963211e-03  1.60052088e-02  4.11810843e-02 -2.95113553e-02
+  5.86590460e-02 -7.77373562e-02 -9.52884729e-02  6.71444164e-03
+ -2.33375086e-02  1.18667963e-02 -4.89531124e-02 -1.78684416e-02
+  4.94646350e-02  4.87527057e-02 -8.31645028e-03 -6.87778953e-02
+ -5.85825967e-03  4.21029442e-02 -3.14918565e-02  5.26080722e-02
+ -3.09748014e-02 -4.82035785e-02  1.85854430e-02  9.05874247e-02
+  7.29850371e-03 -5.36739546e-02  1.40523546e-03 -6.42595551e-02
+ -2.47432819e-02  2.98568734e-02 -1.94898639e-03 -9.74779523e-02
+  4.72413780e-02 -5.25585810e-02 -8.27669689e-02 -3.60726483e-02
+  1.93746097e-02 -3.62609682e-02  6.38069440e-03 -2.80494410e-02
+ -2.60067867e-02]
+(base) ronitkhanna@Ronits-MacBook-Pro cse-467spring26 %
